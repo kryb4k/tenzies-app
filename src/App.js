@@ -1,24 +1,78 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Dice from "./components/Dice";
+import { nanoid } from "nanoid";
+import { useEffect, useState } from "react";
+import Confetti from "react-confetti";
 
 function App() {
+  const [dice, setDice] = useState(allNewDice());
+  const [tenzies, setTenzies] = useState(false);
+
+  useEffect(() => {
+    const allHeld = dice.every((dice) => dice.isHeld);
+    const firstValue = dice[0].value;
+    const allSameValues = dice.every((dice) => dice.value === firstValue);
+    if (allHeld && allSameValues) {
+      setTenzies(true);
+    }
+  }, [dice]);
+
+  function generateNewDice() {
+    return {
+      value: Math.ceil(Math.random() * 6),
+      isHeld: false,
+      id: nanoid(),
+    };
+  }
+
+  function allNewDice() {
+    const newDice = [];
+    for (let i = 0; i < 10; i++) {
+      newDice.push(generateNewDice());
+    }
+    return newDice;
+  }
+
+  function rollDice() {
+    if (!tenzies) {
+      setDice((prevDice) =>
+        prevDice.map((dice) => {
+          return dice.isHeld ? dice : generateNewDice();
+        })
+      );
+    } else {
+      setTenzies(false);
+      setDice(allNewDice());
+    }
+  }
+
+  function holdDice(id) {
+    setDice((prevDice) =>
+      prevDice.map((dice) => {
+        return dice.id === id ? { ...dice, isHeld: !dice.isHeld } : dice;
+      })
+    );
+  }
+
+  const diceElements = dice.map((dice) => (
+    <Dice
+      key={dice.id}
+      value={dice.value}
+      isHeld={dice.isHeld}
+      holdDice={() => holdDice(dice.id)}
+    />
+  ));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      {tenzies && <Confetti />}
+      <h1>Tenzies game</h1>
+      <p className="instruction-text">instruction text</p>
+      <div className="dice-container">{diceElements}</div>
+      <button className="roll-dice-button" onClick={rollDice}>
+        {tenzies ? "New Game" : "Roll"}
+      </button>
+    </main>
   );
 }
 
