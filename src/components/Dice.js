@@ -1,6 +1,6 @@
 export default function Dice(props) {
   const styles = {
-    backgroundColor: props.isHeld ? "green" : "white",
+    backgroundColor: props.isHeld ? "#90EE90" : "#ffffff",
   };
 
   return (

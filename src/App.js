@@ -66,8 +66,11 @@ function App() {
   return (
     <main>
       {tenzies && <Confetti />}
-      <h1>Tenzies game</h1>
-      <p className="instruction-text">instruction text</p>
+      <h1 className="game-title">Tenzies</h1>
+      <p className="instruction-text">
+        Roll until all dice are the same. Click each die to freeze it at its
+        current value between rolls.
+      </p>
       <div className="dice-container">{diceElements}</div>
       <button className="roll-dice-button" onClick={rollDice}>
         {tenzies ? "New Game" : "Roll"}
